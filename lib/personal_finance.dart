@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/models/transaction.dart';
 import 'package:personal_finance/screens/transactions_screen.dart';
+import 'package:personal_finance/widgets/new_transaction.dart';
 
 class PersonalFinance extends StatefulWidget {
   const PersonalFinance({super.key});
@@ -18,11 +19,32 @@ class _PersonalFinanceState extends State<PersonalFinance> {
     Transaction(title: 'Water bill', amount: 300),
   ];
 
+  void addTransaction(Transaction newTransaction) {
+    setState(() {
+      transactions.add(newTransaction);
+    });
+  }
+
+  void openAddTransactionSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => NewTransaction(
+        onTransactionCreated: addTransaction,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Transactions'),
+        actions: [
+          IconButton(
+            onPressed: openAddTransactionSheet,
+            icon: Icon(Icons.add),
+          ),
+        ],
       ),
       body: TransactionsScreen(transactions: transactions),
     );
