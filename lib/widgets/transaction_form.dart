@@ -3,27 +3,42 @@ import 'package:personal_finance/data/categories_data.dart';
 import 'package:personal_finance/helpers/format_datetime.dart';
 import 'package:personal_finance/models/transaction.dart';
 
-class NewTransaction extends StatefulWidget {
-  final void Function(Transaction newTransaction) onTransactionCreated;
-  const NewTransaction({super.key, required this.onTransactionCreated});
+class TransactionForm extends StatefulWidget {
+  final void Function(Transaction newTransaction) onTransactionSaved;
+  final Transaction? existingTransaction;
+  const TransactionForm({
+    super.key,
+    required this.onTransactionSaved,
+    this.existingTransaction,
+  });
 
   @override
-  State<NewTransaction> createState() => _NewTransactionState();
+  State<TransactionForm> createState() => _TransactionFormState();
 }
 
-class _NewTransactionState extends State<NewTransaction> {
-  var title = '';
-  var amount = '';
+class _TransactionFormState extends State<TransactionForm> {
   var selectedDate = DateTime.now();
   var selectedTimeOfDay = TimeOfDay.now();
   String? selectedCategory;
 
   final dateController = TextEditingController();
   final timeController = TextEditingController();
+  final titleController = TextEditingController();
+  final amountController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+
+    if (widget.existingTransaction != null) {
+      final existingTransaction = widget.existingTransaction!;
+      titleController.text = existingTransaction.title;
+      amountController.text = existingTransaction.amount.toString();
+      selectedDate = existingTransaction.dateTime;
+      selectedTimeOfDay = TimeOfDay.fromDateTime(selectedDate);
+      selectedCategory = existingTransaction.categoryId;
+    }
+
     dateController.text = formatDate(selectedDate);
     timeController.text = formatTime(selectedTimeOfDay);
   }
@@ -32,13 +47,17 @@ class _NewTransactionState extends State<NewTransaction> {
   void dispose() {
     dateController.dispose();
     timeController.dispose();
+    titleController.dispose();
+    amountController.dispose();
     super.dispose();
   }
 
   bool isTransactionInvalid() {
-    final parsedAmount = double.tryParse(amount);
+    final parsedAmount = double.tryParse(amountController.text);
     final amountIsInvalid = parsedAmount == null || parsedAmount <= 0;
-    return title.trim().isEmpty || amountIsInvalid || selectedCategory == null;
+    return titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        selectedCategory == null;
   }
 
   void onCanceled() {
@@ -58,12 +77,13 @@ class _NewTransactionState extends State<NewTransaction> {
       selectedTimeOfDay.minute,
     );
     final newTransaction = Transaction(
-      title: title.trim(),
-      amount: double.parse(amount),
+      id: widget.existingTransaction?.id,
+      title: titleController.text.trim(),
+      amount: double.parse(amountController.text),
       dateTime: dateTime,
       categoryId: selectedCategory!,
     );
-    widget.onTransactionCreated(newTransaction);
+    widget.onTransactionSaved(newTransaction);
     Navigator.pop(context);
   }
 
@@ -140,7 +160,7 @@ class _NewTransactionState extends State<NewTransaction> {
               children: [
                 Expanded(
                   child: TextField(
-                    onChanged: (value) => setState(() => title = value),
+                    controller: titleController,
                     decoration: InputDecoration(
                       label: Text('Title'),
                     ),
@@ -149,7 +169,7 @@ class _NewTransactionState extends State<NewTransaction> {
                 SizedBox(width: 16),
                 Expanded(
                   child: TextField(
-                    onChanged: (value) => setState(() => amount = value),
+                    controller: amountController,
                     keyboardType: TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -165,6 +185,7 @@ class _NewTransactionState extends State<NewTransaction> {
               expandedInsets: EdgeInsets.zero,
               label: Text('Category'),
               inputDecorationTheme: theme.inputDecorationTheme,
+              initialSelection: selectedCategory,
               onSelected: (value) => setState(() => selectedCategory = value),
               dropdownMenuEntries: categories
                   .map((category) => DropdownMenuEntry(
