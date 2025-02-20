@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/helpers/format_datetime.dart';
 import 'package:personal_finance/models/transaction.dart';
+import 'package:personal_finance/widgets/category_display.dart';
 
 class TransactionCard extends StatelessWidget {
   final Transaction transaction;
@@ -38,17 +39,7 @@ class TransactionCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      category.icon,
-                      size: 16,
-                      color: theme.colorScheme.tertiary,
-                    ),
-                    SizedBox(width: 4),
-                    Text(category.title, style: titleSmallStyle),
-                  ],
-                ),
+                CategoryDisplay(category: category),
                 Text(
                   formatDateTime(transaction.dateTime),
                   style: titleSmallStyle.copyWith(

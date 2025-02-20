@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:personal_finance/models/destination.dart';
 import 'package:personal_finance/models/transaction.dart';
+import 'package:personal_finance/screens/statistics_screen.dart';
 import 'package:personal_finance/screens/transactions_screen.dart';
 import 'package:personal_finance/widgets/transaction_form.dart';
 
@@ -14,6 +16,7 @@ class PersonalFinance extends StatefulWidget {
 
 class _PersonalFinanceState extends State<PersonalFinance> {
   List<Transaction> transactions = [];
+  int currentScreenIndex = 0;
 
   @override
   void initState() {
@@ -76,24 +79,65 @@ class _PersonalFinanceState extends State<PersonalFinance> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    transactions.sort((a, b) => b.dateTime.compareTo(a.dateTime));
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Transactions'),
-        actions: [
+  void updateCurrentPageIndex(int newIndex) {
+    setState(() {
+      currentScreenIndex = newIndex;
+    });
+  }
+
+  List<Destination> get destinations {
+    return [
+      Destination(
+        screenTitle: Text('Transactions'),
+        navLabel: 'Transactions',
+        navIcon: Icons.receipt_long_outlined,
+        navSelectedIcon: Icons.receipt_long,
+        appBarActions: [
           IconButton(
             onPressed: openAddTransactionSheet,
             icon: Icon(Icons.add),
           ),
         ],
+        screen: TransactionsScreen(
+          transactions: transactions,
+          onTransactionDeleted: deleteTransaction,
+          onTransactionEdited: openEditTransactionSheet,
+        ),
       ),
-      body: TransactionsScreen(
-        transactions: transactions,
-        onTransactionDeleted: deleteTransaction,
-        onTransactionEdited: openEditTransactionSheet,
+      Destination(
+        screenTitle: Text('Statistics'),
+        navLabel: 'Statistics',
+        navIcon: Icons.pie_chart_outline,
+        navSelectedIcon: Icons.pie_chart,
+        screen: StatisticsScreen(
+          transactions: transactions,
+        ),
       ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    transactions.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+
+    final destination = destinations[currentScreenIndex];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: destination.screenTitle,
+        actions: destination.appBarActions,
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: currentScreenIndex,
+        onDestinationSelected: updateCurrentPageIndex,
+        destinations: destinations
+            .map((destination) => NavigationDestination(
+                icon: Icon(destination.navIcon),
+                selectedIcon: Icon(destination.navSelectedIcon),
+                label: destination.navLabel))
+            .toList(),
+      ),
+      body: destination.screen,
     );
   }
 }
