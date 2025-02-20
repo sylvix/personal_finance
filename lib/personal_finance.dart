@@ -3,6 +3,8 @@ import 'package:personal_finance/models/transaction.dart';
 import 'package:personal_finance/screens/transactions_screen.dart';
 import 'package:personal_finance/widgets/transaction_form.dart';
 
+import 'data/transactions_data.dart';
+
 class PersonalFinance extends StatefulWidget {
   const PersonalFinance({super.key});
 
@@ -11,109 +13,33 @@ class PersonalFinance extends StatefulWidget {
 }
 
 class _PersonalFinanceState extends State<PersonalFinance> {
-  List<Transaction> transactions = [
-    Transaction(
-      title: 'Coffee',
-      amount: 150,
-      dateTime: DateTime.now(),
-      categoryId: 'food_and_drinks',
-    ),
-    Transaction(
-      title: 'Groceries',
-      amount: 500,
-      dateTime: DateTime.now(),
-      categoryId: 'food_and_drinks',
-    ),
-    Transaction(
-      title: 'Cinema',
-      amount: 600,
-      dateTime: DateTime.now(),
-      categoryId: 'entertainment',
-    ),
-    Transaction(
-      title: 'Bus fare',
-      amount: 20,
-      dateTime: DateTime.now(),
-      categoryId: 'transport',
-    ),
-    Transaction(
-      title: 'Water bill',
-      amount: 300,
-      dateTime: DateTime.now(),
-      categoryId: 'home',
-    ),
-    Transaction(
-      title: 'Coffee',
-      amount: 150,
-      dateTime: DateTime.now(),
-      categoryId: 'food_and_drinks',
-    ),
-    Transaction(
-      title: 'Groceries',
-      amount: 500,
-      dateTime: DateTime.now(),
-      categoryId: 'food_and_drinks',
-    ),
-    Transaction(
-      title: 'Cinema',
-      amount: 600,
-      dateTime: DateTime.now(),
-      categoryId: 'entertainment',
-    ),
-    Transaction(
-      title: 'Bus fare',
-      amount: 20,
-      dateTime: DateTime.now(),
-      categoryId: 'transport',
-    ),
-    Transaction(
-      title: 'Water bill',
-      amount: 300,
-      dateTime: DateTime.now(),
-      categoryId: 'home',
-    ),
-    Transaction(
-      title: 'Coffee',
-      amount: 150,
-      dateTime: DateTime.now(),
-      categoryId: 'food_and_drinks',
-    ),
-    Transaction(
-      title: 'Groceries',
-      amount: 500,
-      dateTime: DateTime.now(),
-      categoryId: 'food_and_drinks',
-    ),
-    Transaction(
-      title: 'Cinema',
-      amount: 600,
-      dateTime: DateTime.now(),
-      categoryId: 'entertainment',
-    ),
-    Transaction(
-      title: 'Bus fare',
-      amount: 20,
-      dateTime: DateTime.now(),
-      categoryId: 'transport',
-    ),
-    Transaction(
-      title: 'Water bill',
-      amount: 300,
-      dateTime: DateTime.now(),
-      categoryId: 'home',
-    ),
-  ];
+  List<Transaction> transactions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  void loadData() async {
+    final loadedTransactions = await loadTransactions();
+    setState(() {
+      transactions = loadedTransactions;
+    });
+  }
 
   void addTransaction(Transaction newTransaction) {
     setState(() {
       transactions.add(newTransaction);
     });
+    saveTransactions(transactions);
   }
 
   void deleteTransaction(String id) {
     setState(() {
       transactions.removeWhere((transaction) => transaction.id == id);
     });
+    saveTransactions(transactions);
   }
 
   void editTransaction(Transaction editedTransaction) {
@@ -122,6 +48,7 @@ class _PersonalFinanceState extends State<PersonalFinance> {
           .indexWhere((transaction) => transaction.id == editedTransaction.id);
       transactions[index] = editedTransaction;
     });
+    saveTransactions(transactions);
   }
 
   void openAddTransactionSheet() {
