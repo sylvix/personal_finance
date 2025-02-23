@@ -15,7 +15,7 @@ class CategoryDisplay extends StatelessWidget {
         Icon(
           category.icon,
           size: 16,
-          color: theme.colorScheme.tertiary,
+          color: category.color,
         ),
         SizedBox(width: 4),
         Text(category.title, style: titleSmallStyle),

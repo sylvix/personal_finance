@@ -37,12 +37,14 @@ class StatisticsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final expenses = categoryExpenses;
+
     return StatisticsContainer(
       child: Column(
         children: [
           TotalSpent(totalSpent: totalSpent),
-          CategoriesChart(),
-          CategoriesSummary(categoryExpenses: categoryExpenses),
+          CategoriesChart(categoryExpenses: expenses),
+          CategoriesSummary(categoryExpenses: expenses),
         ],
       ),
     );

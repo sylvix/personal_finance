@@ -6,20 +6,24 @@ final categories = [
     id: 'food_and_drinks',
     title: 'Food and Drinks',
     icon: Icons.restaurant,
+    color: Colors.green.shade700,
   ),
   TransactionCategory(
     id: 'entertainment',
     title: 'Entertainment',
     icon: Icons.theater_comedy_outlined,
+    color: Colors.red.shade700,
   ),
   TransactionCategory(
     id: 'transport',
     title: 'Transportation',
     icon: Icons.commute,
+    color: Colors.indigo.shade400,
   ),
   TransactionCategory(
     id: 'home',
     title: 'Home',
     icon: Icons.home,
+    color: Colors.amber.shade700,
   ),
 ];
