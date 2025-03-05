@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_finance/theme/colors.dart';
 
 class IconChartBadge extends StatelessWidget {
   final IconData iconData;
@@ -7,13 +8,15 @@ class IconChartBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final customColors = Theme.of(context).extension<CustomColors>()!;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withAlpha(128),
+            color: customColors.chartBadgeShadow,
             spreadRadius: 2,
             blurRadius: 2,
           )

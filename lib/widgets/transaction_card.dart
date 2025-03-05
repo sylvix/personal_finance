@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_finance/helpers/format_datetime.dart';
 import 'package:personal_finance/models/transaction.dart';
+import 'package:personal_finance/theme/colors.dart';
 import 'package:personal_finance/widgets/category_display.dart';
 
 class TransactionCard extends StatelessWidget {
@@ -13,6 +14,7 @@ class TransactionCard extends StatelessWidget {
     final bodyLargeStyle = theme.textTheme.bodyLarge!;
     final titleSmallStyle = theme.textTheme.titleSmall!;
     final category = transaction.category;
+    final customColors = theme.extension<CustomColors>()!;
 
     return Card(
       child: Padding(
@@ -30,7 +32,7 @@ class TransactionCard extends StatelessWidget {
                   transaction.formattedAmount,
                   style: bodyLargeStyle.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.error,
+                    color: customColors.expense,
                   ),
                 ),
               ],
