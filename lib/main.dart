@@ -7,7 +7,6 @@ void main() {
   runApp(MaterialApp(
     theme: lightTheme,
     darkTheme: darkTheme,
-    themeMode: ThemeMode.system,
     home: PersonalFinance(),
   ));
 }
